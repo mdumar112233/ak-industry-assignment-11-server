@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 
 const MongoClient = require('mongodb').MongoClient;
+const ObjectID = require('mongodb').ObjectID;
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ij0ac.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -51,6 +52,17 @@ client.connect(err => {
     
   })
 
+  app.patch('/update/:id', (req, res) => {
+    userCollection.updateOne({_id: ObjectID(req.params.id)},
+    {
+      $set:{ status: req.body.status}
+    })
+    .then(result => {
+      // res.send(result.insertedCount > 0)
+      console.log(result);
+    })
+  })
+
   app.get('/serviceData', (req, res) => {
     servicesCollection.find({})
     .toArray((err, documents) => {
@@ -76,11 +88,13 @@ client.connect(err => {
   app.get('/allUserData', (req, res) => {
     userCollection.find({})
     .toArray((err, documents) => {
+      console.log('data is come');
       res.send(documents);
     })
   })
 
 });
+
 
 
 

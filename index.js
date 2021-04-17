@@ -12,7 +12,6 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const port =process.env.PORT || 5000;
 app.use(cors());
 app.use(bodyParser.json())
-// app.use(express.urlencoded({extended:false}));
 
 
 app.get('/', (req, res) => {
@@ -25,6 +24,7 @@ client.connect(err => {
   const servicesCollection = client.db("akIndustry").collection("services");
   const userCollection = client.db("akIndustry").collection("userInfo");
   const reviewsCollection = client.db("akIndustry").collection("reviews");
+  const adminCollection = client.db("akIndustry").collection("admin");
 
   app.post('/services', (req, res) => {
     const services = req.body;
@@ -52,13 +52,20 @@ client.connect(err => {
     
   })
 
+  app.post('/addAdmin', (req, res) => {
+    const admin = req.body;
+    adminCollection.insertOne(admin)
+    .then(result => {
+      res.send(result.insertedCount > 0);
+    })
+  })
+
   app.patch('/update/:id', (req, res) => {
     userCollection.updateOne({_id: ObjectID(req.params.id)},
     {
       $set:{ status: req.body.status}
     })
     .then(result => {
-      // res.send(result.insertedCount > 0)
       console.log(result);
     })
   })

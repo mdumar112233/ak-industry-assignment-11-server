@@ -93,6 +93,13 @@ client.connect(err => {
     })
   })
 
+  app.get('/status', (req, res) => {
+    userCollection.find({email: req.query.email})
+    .toArray((err, documents) => {
+      res.send(documents[0]);
+    })
+  })
+
 });
 
 

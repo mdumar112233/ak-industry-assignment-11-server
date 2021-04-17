@@ -22,6 +22,7 @@ app.get('/', (req, res) => {
 
 client.connect(err => {
   const servicesCollection = client.db("akIndustry").collection("services");
+  const userCollection = client.db("akIndustry").collection("userInfo");
   const reviewsCollection = client.db("akIndustry").collection("reviews");
 
   app.post('/services', (req, res) => {
@@ -39,6 +40,15 @@ client.connect(err => {
     .then(result => {
       res.send(result.insertedCount > 0)
     })
+  })
+
+  app.post('/userInfo', (req, res) => {
+    const userInfo = req.body;
+    userCollection.insertOne(userInfo)
+    .then(result => {
+      res.send(result.insertedCount > 0);
+    })
+    
   })
 
   app.get('/serviceData', (req, res) => {
@@ -59,11 +69,20 @@ client.connect(err => {
     const id = req.params.id;
     servicesCollection.find({name: id})
     .toArray((err, documents) => {
-      res.send(documents)
+      res.send(documents[0])
+    })
+  })
+
+  app.get('/allUserData', (req, res) => {
+    userCollection.find({})
+    .toArray((err, documents) => {
+      res.send(documents);
     })
   })
 
 });
+
+
 
 
 

@@ -107,6 +107,13 @@ client.connect(err => {
     })
   })
 
+  app.get('/getAdmin', (req, res) => {
+    adminCollection.find({})
+    .toArray((err, documents) => {
+      res.send(documents)
+    })
+  })
+
   app.delete('/delete/:id', (req, res) => {
     servicesCollection.deleteOne({_id: ObjectID(req.params.id)})
     .then(result => {
